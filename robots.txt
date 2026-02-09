@@ -1,4 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /data/  # Не индексировать JSON
+Allow: /game/
+Disallow: /data/
+Disallow: /game.html
 Sitemap: https://crypt.fans/sitemap.xml

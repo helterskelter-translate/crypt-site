@@ -9,6 +9,47 @@ const gamesPerPage = 12;
 let isLoadingMore = false;
 let currentSort = 'date-desc';
 
+function generateSitemap(games) {
+    const baseUrl = 'https://crypt-translations.ru';
+    const today = new Date().toISOString().split('T')[0];
+    
+    let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>${baseUrl}/</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    
+    <url>
+        <loc>${baseUrl}/all</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    
+    <url>
+        <loc>${baseUrl}/favorites</loc>
+        <lastmod>${today}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
+    
+    games.forEach(game => {
+        sitemap += `
+    <url>
+        <loc>${baseUrl}/game/${game.slug}</loc>
+        <lastmod>${game.dateAdded || today}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>`;
+    });
+    
+    sitemap += '\n</urlset>';
+    return sitemap;
+}
+
 // Загрузка данных игр
 async function loadGames(mode = 'latest') {
     try {
