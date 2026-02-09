@@ -83,22 +83,6 @@
     <script>
         // Инициализация страницы игры
         document.addEventListener('DOMContentLoaded', function() {
-            // === ФИКС ДЛЯ КРАСИВЫХ URL ===
-            // Проверяем, если мы на game.html?slug=xxx
-            // const urlParams = new URLSearchParams(window.location.search);
-            // const gameSlug = urlParams.get('slug');
-            //
-            // if (gameSlug && window.history) {
-                // Создаем красивый URL
-                // const prettyUrl = `/game/${gameSlug}`;
-
-                // Обновляем историю браузера без перезагрузки
-                // window.history.replaceState({}, '', prettyUrl);
-                // console.log('URL updated to:', prettyUrl);
-            // }
-            // === КОНЕЦ ФИКСА ===
-
-            // Теперь загружаем детали игры
             loadGameDetails();
 
             // Поиск
