@@ -10,7 +10,7 @@ let isLoadingMore = false;
 let currentSort = 'date-desc';
 
 function generateSitemap(games) {
-    const baseUrl = 'https://crypt-translations.ru';
+    const baseUrl = 'https://crypt.fans';
     const today = new Date().toISOString().split('T')[0];
     
     let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
