@@ -66,6 +66,7 @@ async function loadGames(mode = 'latest') {
             displayInProgressGames();
             displayPlannedGames();
         } else if (mode === 'all') {
+            updateSitemap();
             displayAllGames();
             initializeTagsFilter();
             initializeSearch();
@@ -665,15 +666,20 @@ async function loadGameDetails() {
         if (path.includes('/game/')) {
             // Красивый URL: /game/exocolonist
             gameSlug = path.split('/game/')[1];
-        } else {
-            // Старый URL: game.html?slug=exocolonist
+        } else if (window.location.search) {
+            // URL с параметром: game.html?slug=exocolonist
             const urlParams = new URLSearchParams(window.location.search);
-            gameSlug = urlParams.get('slug') || urlParams.get('id'); // Поддержка старых ссылок
+            gameSlug = urlParams.get('slug');
         }
         
         if (!gameSlug) {
             showError('Игра не найдена.');
             return;
+        }
+        
+        // Удаляем слеш в конце, если есть
+        if (gameSlug.endsWith('/')) {
+            gameSlug = gameSlug.slice(0, -1);
         }
         
         // Загружаем данные игр
@@ -682,13 +688,17 @@ async function loadGameDetails() {
         
         const games = await response.json();
         
-        // Ищем игру по slug или id
-        const game = games.find(g => 
-            g.slug === gameSlug || 
-            g.id.toString() === gameSlug
-        );
+        // Ищем игру по slug
+        const game = games.find(g => g.slug === gameSlug);
         
         if (!game) {
+            // Попробуем найти по id для обратной совместимости
+            const gameById = games.find(g => g.id.toString() === gameSlug);
+            if (gameById) {
+                // Если нашли по id, перенаправляем на красивый URL
+                window.location.replace(`/game/${gameById.slug}`);
+                return;
+            }
             showError('Игра не найдена.');
             return;
         }
@@ -947,4 +957,23 @@ window.resetFilters = resetFilters;
 window.loadMoreGames = loadMoreGames;
 window.changeSort = changeSort;
 window.toggleFavoriteCard = toggleFavoriteCard;
+
+// Добавьте эту функцию в конец script.js перед последней строкой (window.loadFavorites = loadFavorites;)
+
+async function updateSitemap() {
+    try {
+        const response = await fetch('data/games.json');
+        if (!response.ok) return;
+        
+        const games = await response.json();
+        const sitemap = generateSitemap(games);
+        
+        // Отправляем sitemap на сервер
+        console.log('Generated sitemap:', sitemap);
+        
+    } catch (error) {
+        console.error('Ошибка обновления sitemap:', error);
+    }
+}
+
 window.loadFavorites = loadFavorites;
