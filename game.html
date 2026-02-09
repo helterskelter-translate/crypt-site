@@ -15,6 +15,25 @@
     <link rel="apple-touch-icon" href="images/icon/apple-touch-icon.png" sizes="180x180">
 </head>
 <body>
+    <script>
+        // Обработка красивого URL ДО загрузки страницы
+        (function() {
+            const path = window.location.pathname;
+            
+            // Если это красивый URL /game/slug
+            if (path.startsWith('/game/') && !path.endsWith('.html')) {
+                const slug = path.substring(6); // Убираем '/game/'
+                
+                // Если slug не пустой, перенаправляем на стандартный URL
+                if (slug && slug.length > 0) {
+                    // Удаляем возможный trailing slash
+                    const cleanSlug = slug.replace(/\/$/, '');
+                    window.location.href = `/game.html?slug=${encodeURIComponent(cleanSlug)}`;
+                    return; // Прерываем дальнейшую загрузку
+                }
+            }
+        })();
+    </script>
     <!-- Шапка сайта -->
     <header class="header">
         <div class="container">
