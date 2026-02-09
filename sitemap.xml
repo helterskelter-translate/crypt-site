@@ -3,13 +3,50 @@
     <url>
         <loc>https://crypt.fans/</loc>
         <lastmod>2026-02-09</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
     </url>
+    
     <url>
-        <loc>https://crypt.fans/all.html</loc>
+        <loc>https://crypt.fans/all</loc>
         <lastmod>2026-02-09</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
     </url>
+    
     <url>
-        <loc>https://crypt.fans/favorites.html</loc>
+        <loc>https://crypt.fans/favorites</loc>
         <lastmod>2026-02-09</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    
+    <!-- Страницы игр -->
+    <url>
+        <loc>https://crypt.fans/game/exocolonist</loc>
+        <lastmod>2026-02-09</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://crypt.fans/game/alone-with-you</loc>
+        <lastmod>2026-02-09</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://crypt.fans/game/heaven-will-be-mine</loc>
+        <lastmod>2026-02-09</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+    </url>
+    
+    <url>
+        <loc>https://crypt.fans/game/dark-deity</loc>
+        <lastmod>2026-02-09</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
     </url>
 </urlset>
