@@ -529,38 +529,21 @@ function initializeTagsFilter() {
 function initializeAuthorFilter() {
     const authorButtons = document.querySelectorAll('.author-filter-btn');
     
-    // Устанавливаем активную кнопку на основе URL параметров или "Все авторы"
-    const urlParams = new URLSearchParams(window.location.search);
-    const authorParam = urlParams.get('author');
-    
-    if (authorParam) {
-        selectedAuthor = authorParam;
-    }
-    
-    // Устанавливаем активный класс
-    authorButtons.forEach(btn => {
-        if ((!authorParam && btn.dataset.author === 'all') || 
-            (authorParam && btn.dataset.author === authorParam)) {
-            btn.classList.add('active');
-        } else {
-            btn.classList.remove('active');
-        }
-    });
-    
-    // Обработчики для фильтра по авторам
+    // Обработчики для фильтра по авторам в боковой панели
     authorButtons.forEach(btn => {
         btn.addEventListener('click', function() {
-            // Обновляем URL без полной перезагрузки
+            const author = this.dataset.author;
             const url = new URL(window.location);
-            if (this.dataset.author === 'all') {
+            
+            if (author === 'all') {
                 url.searchParams.delete('author');
             } else {
-                url.searchParams.set('author', this.dataset.author);
+                url.searchParams.set('author', author);
             }
-            window.history.pushState({}, '', url);
             
-            // Обновляем фильтр
-            selectedAuthor = this.dataset.author;
+            // Обновляем URL и применяем фильтр
+            window.history.pushState({}, '', url);
+            selectedAuthor = author;
             filterGames();
             
             // Обновляем активные кнопки
@@ -568,6 +551,21 @@ function initializeAuthorFilter() {
             this.classList.add('active');
         });
     });
+    
+    // Активируем кнопку на основе URL параметров
+    const urlParams = new URLSearchParams(window.location.search);
+    const authorParam = urlParams.get('author');
+    
+    if (authorParam) {
+        selectedAuthor = authorParam;
+        authorButtons.forEach(btn => {
+            if (btn.dataset.author === authorParam) {
+                btn.classList.add('active');
+            } else if (btn.dataset.author === 'all') {
+                btn.classList.remove('active');
+            }
+        });
+    }
 }
 
 // Инициализация поиска
@@ -628,14 +626,28 @@ function filterGamesArray() {
             Array.from(activeTags).every(tag => game.tags.includes(tag));
         
         // Фильтр по автору
-        const normalizedGameAuthor = (game.author || '').toLowerCase().replace(/\s+/g, '-');
-        const normalizedSelectedAuthor = selectedAuthor.toLowerCase();
-        const matchesAuthor = normalizedSelectedAuthor === 'all' || normalizedGameAuthor === normalizedSelectedAuthor;
+        if (selectedAuthor !== 'all') {
+            // Нормализуем имена для сравнения
+            const gameAuthor = (game.author || '').toLowerCase().replace(/\s+/g, '-');
+            const selected = selectedAuthor.toLowerCase();
+            
+            console.log('Comparing author:', gameAuthor, 'with:', selected);
+            
+            // Проверяем несколько вариантов написания
+            const authorVariants = [
+                gameAuthor,
+                game.author?.toLowerCase() || '',
+                game.author?.replace(/\s+/g, '').toLowerCase() || ''
+            ];
+            
+            if (!authorVariants.some(variant => variant.includes(selected))) {
+                return false;
+            }
+        }
         
-        return matchesSearch && matchesTags && matchesAuthor;
+        return true;
     });
     
-    // Применяем сортировку
     return sortGames(filtered);
 }
 

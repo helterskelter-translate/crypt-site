@@ -102,8 +102,24 @@
     <script>
         // Инициализация страницы игры
         document.addEventListener('DOMContentLoaded', function() {
+            // === ФИКС ДЛЯ КРАСИВЫХ URL ===
+            // Проверяем, если мы на game.html?slug=xxx
+            const urlParams = new URLSearchParams(window.location.search);
+            const gameSlug = urlParams.get('slug');
+
+            if (gameSlug && window.history) {
+                // Создаем красивый URL
+                const prettyUrl = `/game/${gameSlug}`;
+
+                // Обновляем историю браузера без перезагрузки
+                window.history.replaceState({}, '', prettyUrl);
+                console.log('URL updated to:', prettyUrl);
+            }
+            // === КОНЕЦ ФИКСА ===
+
+            // Теперь загружаем детали игры
             loadGameDetails();
-            
+
             // Поиск
             const searchInput = document.getElementById('search-input');
             searchInput.addEventListener('keyup', function(e) {
@@ -114,19 +130,20 @@
                     }
                 }
             });
-            
+
             // Мобильное меню
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             mobileMenuBtn.addEventListener('click', function() {
                 document.querySelector('.nav').classList.toggle('active');
             });
-            
+
             // Обработчики для кнопок авторов
             document.querySelectorAll('.nav-link[data-author]').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const author = this.dataset.author;
-                    window.location.href = `all.html?author=${author}`;
+                    // Перенаправляем на страницу всех игр с фильтром по автору
+                    window.location.href = `/all.html?author=${encodeURIComponent(author)}`;
                 });
             });
         });
