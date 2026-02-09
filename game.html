@@ -55,7 +55,7 @@
                 </div>
                 
                 <div class="back-to-all">
-                    <a href="/" class="back-link">
+                    <a href="/all.html" class="back-link">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 19L8 12L15 5" stroke="#e3a945" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
@@ -107,12 +107,8 @@
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const author = this.dataset.author;
-                    // Перенаправляем на страницу автора
-                    const authorPath = author
-                        .toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[^\w\-]/g, '');
-                    window.location.href = `/author/${authorPath}`;
+                    // Перенаправляем на страницу всех игр с фильтром по автору
+                    window.location.href = `/all.html?author=${encodeURIComponent(author)}`;
                 });
             });
         });

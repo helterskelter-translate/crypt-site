@@ -8,10 +8,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
-    <link rel="icon" href="images/icon/favicon.ico" type="image/x-icon">
-    <link rel="icon" href="images/icon/favicon-32x32.png" type="image/png" sizes="32x32">
-    <link rel="icon" href="images/icon/favicon-16x16.png" type="image/png" sizes="16x16">
-    <link rel="apple-touch-icon" href="images/icon/apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" href="/images/icon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/images/icon/favicon-32x32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="/images/icon/favicon-16x16.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="/images/icon/apple-touch-icon.png" sizes="180x180">
 </head>
 <body>
     <!-- Шапка сайта -->
@@ -108,12 +108,8 @@
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const author = this.dataset.author;
-                    // Перенаправляем на страницу автора
-                    const authorPath = author
-                        .toLowerCase()
-                        .replace(/\s+/g, '-')
-                        .replace(/[^\w\-]/g, '');
-                    window.location.href = `/author/${authorPath}`;
+                    // Перенаправляем на страницу всех игр с фильтром по автору
+                    window.location.href = `/all.html?author=${encodeURIComponent(author)}`;
                 });
             });
             
