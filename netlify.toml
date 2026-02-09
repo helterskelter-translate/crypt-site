@@ -1,4 +1,0 @@
-[[redirects]]
-from = "/game/*"
-to = "/game.html"
-status = 200

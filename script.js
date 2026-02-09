@@ -667,6 +667,12 @@ function changeSort(sortType) {
 }
 
 async function loadGameDetails() {
+    if (window.location.pathname === '/404.html') {
+        const intendedPath = window.location.search.substring(1); // Если GitHub добавит ?path=/game/slug
+        if (intendedPath) {
+            history.replaceState(null, '', intendedPath);
+        }
+    }
     try {
         let gameSlug;
         
