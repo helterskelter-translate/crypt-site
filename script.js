@@ -871,7 +871,7 @@ function displayGameDetails(game) {
             tagLink.addEventListener('click', function(e) {
                 e.preventDefault();
                 const tag = this.dataset.tag;
-                window.location.href = `all.html?tag=${encodeURIComponent(tag)}`;
+                window.location.href = `/all.html?tag=${encodeURIComponent(tag)}`;
             });
         });
     }, 100);
