@@ -1,12 +1,8 @@
-# Красивые URL → обработка в game.html
+# _redirects.txt (исправленная версия)
 /game/:slug              /game.html?slug=:slug     200
 
-# Старые ссылки → перенаправление на красивые URL
-/game.html?id=:id        /game/:slug              301!
-/game.html?slug=:slug    /game/:slug              301
-
-# Пустые запросы
-/game.html               /all.html                 301
+# Перенаправление только старых ID-ссылок
+/game.html?id=:id        /game/:slug              301
 
 # Другие страницы
 /                        /index.html              200

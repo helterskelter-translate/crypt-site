@@ -361,7 +361,7 @@ function createGameCard(game) {
 
     return `
         <div class="game-card">
-            <a href="game/${game.slug}" class="game-card-link">
+            <a href="/game/${game.slug}" class="game-card-link">
                 <img src="${game.coverImage}" alt="${game.titleRu}" class="game-cover">
                 ${statusBadge}
                 <div class="game-info">
@@ -657,28 +657,20 @@ function changeSort(sortType) {
 async function loadGameDetails() {
     try {
         // Получаем slug из URL
-        const path = window.location.pathname;
         const urlParams = new URLSearchParams(window.location.search);
-        let gameSlug = null;
+        let gameSlug = urlParams.get('slug');
         
-        // Определяем, откуда берём slug
-        if (path.includes('/game/')) {
-            // Красивый URL: /game/exocolonist
-            gameSlug = path.split('/game/')[1];
-        } else if (urlParams.has('slug')) {
-            // Старый формат: game.html?slug=exocolonist
-            gameSlug = urlParams.get('slug');
-        } else if (urlParams.has('id')) {
-            // Самый старый формат: game.html?id=1
-            const gameId = urlParams.get('id');
-            // Нужно найти игру по ID и получить её slug
-            const response = await fetch('data/games.json');
-            const games = await response.json();
-            const game = games.find(g => g.id == gameId);
-            if (game && game.slug) {
-                // Перенаправляем на красивый URL
-                window.location.href = `game/${game.slug}`;
-                return;
+        // Если нет slug в параметрах, пробуем из пути
+        if (!gameSlug) {
+            const path = window.location.pathname;
+            if (path.includes('/game/')) {
+                // Удаляем начальный и конечный слэши
+                const pathParts = path.split('/');
+                // Ищем часть после 'game'
+                const gameIndex = pathParts.indexOf('game');
+                if (gameIndex !== -1 && pathParts.length > gameIndex + 1) {
+                    gameSlug = pathParts[gameIndex + 1];
+                }
             }
         }
         

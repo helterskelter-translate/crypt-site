@@ -1,0 +1,20 @@
+# netlify.toml
+[[redirects]]
+  from = "/game/*"
+  to = "/game.html?slug=:splat"
+  status = 200
+
+[[redirects]]
+  from = "/all"
+  to = "/all.html"
+  status = 200
+
+[[redirects]]
+  from = "/favorites"
+  to = "/favorites.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
