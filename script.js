@@ -656,49 +656,77 @@ function changeSort(sortType) {
 
 async function loadGameDetails() {
     try {
-        // Получаем slug из URL
-        const urlParams = new URLSearchParams(window.location.search);
-        let gameSlug = urlParams.get('slug');
+        console.log('[loadGameDetails] Start');
         
-        // Если нет slug в параметрах, пробуем из пути
+        let gameSlug = null;
+        
+        // Сначала проверяем параметры URL
+        const urlParams = new URLSearchParams(window.location.search);
+        gameSlug = urlParams.get('slug');
+        
+        console.log('[loadGameDetails] Slug from params:', gameSlug);
+        
+        // Если нет в параметрах, пробуем из пути
         if (!gameSlug) {
             const path = window.location.pathname;
-            if (path.includes('/game/')) {
-                // Удаляем начальный и конечный слэши
-                const pathParts = path.split('/');
-                // Ищем часть после 'game'
-                const gameIndex = pathParts.indexOf('game');
-                if (gameIndex !== -1 && pathParts.length > gameIndex + 1) {
-                    gameSlug = pathParts[gameIndex + 1];
+            console.log('[loadGameDetails] Path:', path);
+            
+            // Несколько способов извлечь slug
+            if (path.startsWith('/game/')) {
+                // Удаляем '/game/' из начала
+                gameSlug = path.substring(6); // 6 = длина '/game/'
+                
+                // Если есть trailing slash, удаляем его
+                if (gameSlug.endsWith('/')) {
+                    gameSlug = gameSlug.slice(0, -1);
+                }
+                
+                console.log('[loadGameDetails] Slug from path (method 1):', gameSlug);
+            } else if (path.includes('/game/')) {
+                // Более надежный метод
+                const match = path.match(/\/game\/([^\/]+)/);
+                if (match && match[1]) {
+                    gameSlug = match[1];
+                    console.log('[loadGameDetails] Slug from path (regex):', gameSlug);
                 }
             }
         }
         
         if (!gameSlug) {
-            showError('Игра не найдена.');
+            console.error('[loadGameDetails] No slug found!');
+            showError('Игра не найдена. Не удалось определить идентификатор игры.');
             return;
         }
         
+        console.log('[loadGameDetails] Final slug:', gameSlug);
+        
         // Загружаем данные игр
+        console.log('[loadGameDetails] Fetching games.json...');
         const response = await fetch('data/games.json');
-        if (!response.ok) throw new Error('Не удалось загрузить данные');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
         const games = await response.json();
+        console.log('[loadGameDetails] Games loaded:', games.length);
         
         // Ищем игру по slug
         const game = games.find(g => g.slug === gameSlug);
         
         if (!game) {
-            showError('Игра не найдена.');
+            console.error('[loadGameDetails] Game not found for slug:', gameSlug);
+            console.log('[loadGameDetails] Available slugs:', games.map(g => g.slug));
+            showError(`Игра "${gameSlug}" не найдена в базе данных.`);
             return;
         }
         
+        console.log('[loadGameDetails] Game found:', game.titleRu);
         displayGameDetails(game);
         updatePageTitle(game);
         
     } catch (error) {
-        console.error('Ошибка загрузки деталей игры:', error);
-        showError('Не удалось загрузить информацию об игре.');
+        console.error('[loadGameDetails] Error:', error);
+        showError(`Не удалось загрузить информацию об игре: ${error.message}`);
     }
 }
 

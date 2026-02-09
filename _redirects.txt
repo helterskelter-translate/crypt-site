@@ -1,13 +1,13 @@
-# _redirects.txt (исправленная версия)
-/game/:slug              /game.html?slug=:slug     200
+# _redirects.txt
+/game/*                  /game.html?slug=:splat    200
 
-# Перенаправление только старых ID-ссылок
-/game.html?id=:id        /game/:slug              301
+# Резервные правила
+/game.html               /all.html                 301
+/all                     /all.html                 200
+/favorites               /favorites.html           200
 
-# Другие страницы
+# Главная
 /                        /index.html              200
-/all                     /all.html                200
-/favorites               /favorites.html          200
 
-# 404
-/*                      /index.html              404
+# 404 должно быть последним
+/*                       /index.html              404
