@@ -1,4 +1,4 @@
 [[redirects]]
-from = "/game/*"
-to = "/game.html"
+from = "/*"
+to = "/index.html"
 status = 200
