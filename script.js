@@ -71,10 +71,19 @@ async function loadGames(mode = 'latest') {
             initializeSearch();
             initializeAuthorFilter();
             
-            // Фильтруем игры если есть параметры URL
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('search') || urlParams.has('author') || urlParams.has('tag')) {
+            // Проверяем localStorage для фильтра по автору
+            const authorFromStorage = localStorage.getItem('filterByAuthor');
+            if (authorFromStorage) {
+                selectedAuthor = authorFromStorage;
+                // Очищаем localStorage после использования
+                localStorage.removeItem('filterByAuthor');
                 filterGames();
+            } else {
+                // Фильтруем игры если есть параметры URL
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.has('search') || urlParams.has('author') || urlParams.has('tag')) {
+                    filterGames();
+                }
             }
         }
     } catch (error) {
@@ -533,22 +542,26 @@ function initializeAuthorFilter() {
     authorButtons.forEach(btn => {
         btn.addEventListener('click', function() {
             const author = this.dataset.author;
-            const url = new URL(window.location);
             
             if (author === 'all') {
+                // Очищаем фильтр и переходим на /all.html
+                selectedAuthor = 'all';
+                const url = new URL(window.location);
                 url.searchParams.delete('author');
+                window.history.pushState({}, '', url);
+                filterGames();
+                
+                // Обновляем активные кнопки
+                authorButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
             } else {
-                url.searchParams.set('author', author);
+                // Перенаправляем на страницу автора
+                const authorPath = author
+                    .toLowerCase()
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]/g, '');
+                window.location.href = `/author/${authorPath}`;
             }
-            
-            // Обновляем URL и применяем фильтр
-            window.history.pushState({}, '', url);
-            selectedAuthor = author;
-            filterGames();
-            
-            // Обновляем активные кнопки
-            authorButtons.forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
         });
     });
     
@@ -627,25 +640,27 @@ function filterGamesArray() {
         
         // Фильтр по автору
         if (selectedAuthor !== 'all') {
-            // Нормализуем имена для сравнения
-            const gameAuthor = (game.author || '').toLowerCase().replace(/\s+/g, '-');
-            const selected = selectedAuthor.toLowerCase();
+            // Нормализуем имена для сравнения - преобразуем оба в slug формат
+            const gameAuthorSlug = (game.author || '')
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w\-]/g, '');
             
-            console.log('Comparing author:', gameAuthor, 'with:', selected);
+            const selectedAuthorSlug = selectedAuthor
+                .toLowerCase()
+                .replace(/\s+/g, '-')
+                .replace(/[^\w\-]/g, '');
             
-            // Проверяем несколько вариантов написания
-            const authorVariants = [
-                gameAuthor,
-                game.author?.toLowerCase() || '',
-                game.author?.replace(/\s+/g, '').toLowerCase() || ''
-            ];
+            // Сравниваем slug версии или оригинальные имена
+            const isMatch = gameAuthorSlug === selectedAuthorSlug || 
+                           game.author?.toLowerCase() === selectedAuthor.toLowerCase();
             
-            if (!authorVariants.some(variant => variant.includes(selected))) {
+            if (!isMatch) {
                 return false;
             }
         }
         
-        return true;
+        return matchesSearch && matchesTags;
     });
     
     return sortGames(filtered);

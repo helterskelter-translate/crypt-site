@@ -108,8 +108,12 @@
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     const author = this.dataset.author;
-                    // Перенаправляем на страницу всех игр с фильтром по автору
-                    window.location.href = `/all.html?author=${encodeURIComponent(author)}`;
+                    // Перенаправляем на страницу автора
+                    const authorPath = author
+                        .toLowerCase()
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\w\-]/g, '');
+                    window.location.href = `/author/${authorPath}`;
                 });
             });
             
