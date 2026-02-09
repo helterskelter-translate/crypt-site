@@ -18,10 +18,10 @@
     <header class="header">
         <div class="container">
             <div class="header-inner">
-                <a href="index.html" class="logo">крипт</a>
+                <a href="/" class="logo">крипт</a>
                 <nav class="nav">
-                    <a href="index.html" class="nav-link">Главная</a>
-                    <a href="favorites.html" class="nav-link">Избранное</a>
+                    <a href="/all.html" class="nav-link">Главная</a>
+                    <a href="/favorites.html" class="nav-link">Избранное</a>
                     <a href="#" class="nav-link" data-author="helter-skelter">Helter Skelter</a>
                     <a href="#" class="nav-link" data-author="snow-rowan">Snow Rowan</a>
                     <a href="#" class="nav-link" data-author="gardares">Gardares</a>
@@ -133,9 +133,7 @@
             if (e.key === 'Enter') {
                 const query = this.value.trim();
                 if (query) {
-                    const url = new URL(window.location);
-                    url.searchParams.set('search', query);
-                    window.location.href = url.toString();
+                    window.location.href = `/all.html?search=${encodeURIComponent(query)}`;
                 }
             }
         });
