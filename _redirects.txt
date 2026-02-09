@@ -1,5 +1,5 @@
 # Основные перенаправления
-/game/:slug              /game.html?slug=:slug     200
+/game/:slug              /game.html     200
 
 # Поддержка старых ссылок
 /game.html?id=:id        /game/:slug              301

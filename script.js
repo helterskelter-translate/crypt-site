@@ -666,20 +666,16 @@ async function loadGameDetails() {
         if (path.includes('/game/')) {
             // Красивый URL: /game/exocolonist
             gameSlug = path.split('/game/')[1];
-        } else if (window.location.search) {
-            // URL с параметром: game.html?slug=exocolonist
-            const urlParams = new URLSearchParams(window.location.search);
-            gameSlug = urlParams.get('slug');
+            
+            // Удаляем слеш в конце, если есть
+            if (gameSlug.endsWith('/')) {
+                gameSlug = gameSlug.slice(0, -1);
+            }
         }
         
         if (!gameSlug) {
             showError('Игра не найдена.');
             return;
-        }
-        
-        // Удаляем слеш в конце, если есть
-        if (gameSlug.endsWith('/')) {
-            gameSlug = gameSlug.slice(0, -1);
         }
         
         // Загружаем данные игр
@@ -692,13 +688,6 @@ async function loadGameDetails() {
         const game = games.find(g => g.slug === gameSlug);
         
         if (!game) {
-            // Попробуем найти по id для обратной совместимости
-            const gameById = games.find(g => g.id.toString() === gameSlug);
-            if (gameById) {
-                // Если нашли по id, перенаправляем на красивый URL
-                window.location.replace(`/game/${gameById.slug}`);
-                return;
-            }
             showError('Игра не найдена.');
             return;
         }
