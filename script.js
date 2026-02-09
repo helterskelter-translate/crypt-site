@@ -362,7 +362,7 @@ function createGameCard(game) {
 
     return `
         <div class="game-card">
-            <a href="/game/${game.slug}" class="game-card-link">
+            <a href="/game/${game.slug}/" class="game-card-link">
                 <img src="${game.coverImage}" alt="${game.titleRu}" class="game-cover">
                 ${statusBadge}
                 <div class="game-info">
