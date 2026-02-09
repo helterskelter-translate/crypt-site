@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная | крипт</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/icon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/icon/favicon-32x32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="images/icon/favicon-16x16.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="images/icon/apple-touch-icon.png" sizes="180x180">
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo">крипт</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="favorites.html" class="nav-link">Избранное</a>
+                    <a href="#" class="nav-link" data-author="helter-skelter">Helter Skelter</a>
+                    <a href="#" class="nav-link" data-author="snow-rowan">Snow Rowan</a>
+                    <a href="#" class="nav-link" data-author="gardares">Gardares</a>
+                </nav>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Поиск переводов..." id="search-input">
+                    <button class="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 19L14.65 14.65" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main">
+        <section class="all-translations">
+            <div class="container">
+                <h1 class="page-title">Главная</h1>
+                
+                <div class="filters-section">
+                    <div class="search-filter">
+                        <input type="text" class="filter-search-input" id="filter-search" placeholder="Поиск по названию...">
+                    </div>
+                    
+                    <div class="author-filter">
+                        <h3 class="filter-title">Автор перевода</h3>
+                        <div class="authors-list" id="authors-container">
+                            <button class="author-filter-btn" data-author="all">Все авторы</button>
+                            <button class="author-filter-btn" data-author="helter-skelter">Helter Skelter</button>
+                            <button class="author-filter-btn" data-author="snow-rowan">Snow Rowan</button>
+                            <button class="author-filter-btn" data-author="gardares">Gardares</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tags-filter">
+                        <h3 class="filter-title">Теги</h3>
+                        <div class="tags-cloud" id="tags-container">
+                            <!-- Теги будут загружены через JavaScript -->
+                        </div>
+                        <button class="clear-filters-btn" id="clear-filters">Сбросить фильтры</button>
+                    </div>
+                </div>
+
+                <div class="sort-section">
+                    <h3 class="filter-title">Сортировка</h3>
+                    <div class="sort-buttons">
+                        <button class="sort-btn active" data-sort="date-desc">Сначала новые</button>
+                        <button class="sort-btn" data-sort="date-asc">Сначала старые</button>
+                        <button class="sort-btn" data-sort="year-desc">По году ↓</button>
+                        <button class="sort-btn" data-sort="year-asc">По году ↑</button>
+                        <button class="sort-btn" data-sort="title-asc">По алфавиту А-Я</button>
+                        <button class="sort-btn" data-sort="title-desc">По алфавиту Я-А</button>
+                    </div>
+                </div>
+
+                <div class="games-count">
+                    Найдено переводов: <span id="games-count">0</span>
+                </div>
+                
+                <div class="games-grid" id="all-games-container">
+                    <!-- Карточки будут загружены через JavaScript -->
+                    <div class="loading">Загрузка переводов...</div>
+                </div>
+
+                <!-- Кнопка "Показать еще" -->
+                <div class="load-more-container" id="load-more-container" style="display: none;">
+                    <button class="btn load-more-btn" id="load-more-btn">Показать еще</button>
+                </div>
+
+                <!-- Сообщение "нет результатов" (изначально скрыто) -->
+                <div class="no-results" id="no-results" style="display: none;">
+                    <p>По вашему запросу ничего не найдено.</p>
+                    <button class="btn" id="reset-search">Сбросить поиск</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">крипт</div>
+                <p class="footer-text">Фанатские переводы визуальных новелл и скрытых гемов, 2026</p>
+                <p class="footer-note">Все игры принадлежат их правообладателям. Все переводы созданы энтузиастами на некоммерческой основе, мы не продаем их или рекламу</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="script.js"></script>
+    <script>
+    // Инициализация страницы всех переводов
+    document.addEventListener('DOMContentLoaded', function() {
+        loadGames('all');
+
+        // Поиск в шапке
+        const searchInput = document.getElementById('search-input');
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                const query = this.value.trim();
+                if (query) {
+                    const url = new URL(window.location);
+                    url.searchParams.set('search', query);
+                    window.location.href = url.toString();
+                }
+            }
+        });
+
+        // Мобильное меню
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        mobileMenuBtn.addEventListener('click', function() {
+            document.querySelector('.nav').classList.toggle('active');
+        });
+        
+        // Навигация по авторам в шапке
+        document.querySelectorAll('.nav-link[data-author]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const author = this.dataset.author;
+            });
+        });
+
+        const loadMoreBtn = document.getElementById('load-more-btn');
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', loadMoreGames);
+        };
+
+        // Обработчики сортировки
+        document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                changeSort(this.dataset.sort);
+            });
+        });
+    });
+</script>
+</body>
+</html>

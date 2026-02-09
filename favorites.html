@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Избранное | крипт</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/icon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/icon/favicon-32x32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="images/icon/favicon-16x16.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="images/icon/apple-touch-icon.png" sizes="180x180">
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo">крипт</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="favorites.html" class="nav-link active">Избранное</a>
+                    <a href="#" class="nav-link" data-author="helter-skelter">Helter Skelter</a>
+                    <a href="#" class="nav-link" data-author="snow-rowan">Snow Rowan</a>
+                    <a href="#" class="nav-link" data-author="gardares">Gardares</a>
+                </nav>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Поиск переводов..." id="search-input">
+                    <button class="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 19L14.65 14.65" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main">
+        <section class="favorites">
+            <div class="container">
+                <h1 class="page-title">Избранное</h1>
+                
+                <div class="favorites-info">
+                    <p>Здесь собраны ваши любимые переводы. Нажмите на сердечко на карточке игры, чтобы добавить или удалить ее из избранного.</p>
+                </div>
+                
+                <div class="games-count">
+                    В избранном: <span id="favorites-count">0</span> игр
+                </div>
+                
+                <div class="games-grid" id="favorites-container">
+                    <div class="no-results" id="empty-favorites">
+                        <p>У вас пока нет избранных игр.</p>
+                        <a href="all.html" class="btn">Найти переводы</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">крипт</div>
+                <p class="footer-text">Фанатские переводы визуальных новелл и скрытых гемов, 2026</p>
+                <p class="footer-note">Все игры принадлежат их правообладателям. Все переводы созданы энтузиастами на некоммерческой основе, мы не продаем их или рекламу</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="script.js"></script>
+    <script>
+        // Инициализация страницы избранного
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFavorites();
+            
+            // Поиск
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        window.location.href = `all.html?search=${encodeURIComponent(query)}`;
+                    }
+                }
+            });
+            
+            // Мобильное меню
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            mobileMenuBtn.addEventListener('click', function() {
+                document.querySelector('.nav').classList.toggle('active');
+            });
+            
+            // Обработчики для кнопок авторов
+            document.querySelectorAll('.nav-link[data-author]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const author = this.dataset.author;
+                });
+            });
+            
+            // Обновляем избранное при изменении localStorage
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'crypt-favorites') {
+                    loadFavorites();
+                }
+            });
+        });
+        
+        // Функция показа ошибки
+        function showError(message) {
+            const container = document.getElementById('favorites-container');
+            if (container) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <p>${message}</p>
+                        <button class="btn" onclick="loadFavorites()">Попробовать снова</button>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
