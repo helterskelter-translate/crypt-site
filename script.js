@@ -53,7 +53,7 @@ function generateSitemap(games) {
 // Загрузка данных игр
 async function loadGames(mode = 'latest') {
     try {
-        const response = await fetch('data/games.json');
+        const response = await fetch('https://crypt.fans/data/games.json');
         if (!response.ok) throw new Error('Не удалось загрузить данные');
         
         allGames = await response.json();
@@ -122,7 +122,7 @@ async function loadFavorites() {
         if (!container) return;
         
         // Загружаем данные игр
-        const response = await fetch('data/games.json');
+        const response = await fetch('https://crypt.fans/data/games.json');
         if (!response.ok) throw new Error('Не удалось загрузить данные');
         
         const allGames = await response.json();
@@ -669,66 +669,87 @@ function changeSort(sortType) {
 async function loadGameDetails() {
     try {
         console.log('[loadGameDetails] Start');
+        console.log('[loadGameDetails] Full URL:', window.location.href);
+        console.log('[loadGameDetails] Pathname:', window.location.pathname);
+        console.log('[loadGameDetails] Search:', window.location.search);
         
         let gameSlug = null;
         
-        // Сначала проверяем параметры URL
+        // ПРИОРИТЕТ 1: Параметры URL (game.html?slug=xxx)
         const urlParams = new URLSearchParams(window.location.search);
         gameSlug = urlParams.get('slug');
         
-        console.log('[loadGameDetails] Slug from params:', gameSlug);
-        
-        // Если нет в параметрах, пробуем из пути
+        // ПРИОРИТЕТ 2: Красивый URL (/game/xxx)
         if (!gameSlug) {
             const path = window.location.pathname;
-            console.log('[loadGameDetails] Path:', path);
+            console.log('[loadGameDetails] Trying to extract from path:', path);
             
-            // Несколько способов извлечь slug
+            // Простой способ извлечь slug
             if (path.startsWith('/game/')) {
-                // Удаляем '/game/' из начала
-                gameSlug = path.substring(6); // 6 = длина '/game/'
-                
-                // Если есть trailing slash, удаляем его
-                if (gameSlug.endsWith('/')) {
-                    gameSlug = gameSlug.slice(0, -1);
-                }
-                
-                console.log('[loadGameDetails] Slug from path (method 1):', gameSlug);
-            } else if (path.includes('/game/')) {
-                // Более надежный метод
-                const match = path.match(/\/game\/([^\/]+)/);
-                if (match && match[1]) {
-                    gameSlug = match[1];
-                    console.log('[loadGameDetails] Slug from path (regex):', gameSlug);
-                }
+                // Убираем '/game/' и возможный trailing slash
+                gameSlug = path.replace('/game/', '').replace(/\/$/, '');
+                console.log('[loadGameDetails] Extracted from path:', gameSlug);
             }
         }
         
         if (!gameSlug) {
-            console.error('[loadGameDetails] No slug found!');
-            showError('Игра не найдена. Не удалось определить идентификатор игры.');
+            showError('Игра не найдена. Не удалось определить slug.');
             return;
         }
         
-        console.log('[loadGameDetails] Final slug:', gameSlug);
+        console.log('[loadGameDetails] Final slug to load:', gameSlug);
         
-        // Загружаем данные игр
-        console.log('[loadGameDetails] Fetching games.json...');
-        const response = await fetch('data/games.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // === ВАЖНО: Проверяем путь к games.json ===
+        console.log('[loadGameDetails] Trying to fetch games.json...');
+        
+        // Пробуем разные пути
+        const pathsToTry = [
+            'data/games.json',
+            '/data/games.json',
+            './data/games.json',
+            '../data/games.json'
+        ];
+        
+        let response;
+        let lastError;
+        
+        for (const path of pathsToTry) {
+            try {
+                console.log('[loadGameDetails] Trying path:', path);
+                response = await fetch(path);
+                if (response.ok) break;
+            } catch (err) {
+                lastError = err;
+                console.log('[loadGameDetails] Failed with path:', path, err);
+            }
         }
         
-        const games = await response.json();
-        console.log('[loadGameDetails] Games loaded:', games.length);
+        if (!response || !response.ok) {
+            throw new Error(`Не удалось загрузить games.json. Последняя ошибка: ${lastError?.message || 'неизвестно'}`);
+        }
         
-        // Ищем игру по slug
+        // Проверяем содержимое ответа
+        const responseText = await response.text();
+        console.log('[loadGameDetails] Response first 100 chars:', responseText.substring(0, 100));
+        
+        // Пробуем распарсить JSON
+        let games;
+        try {
+            games = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error('[loadGameDetails] JSON parse error:', parseError);
+            console.error('[loadGameDetails] Response:', responseText);
+            throw new Error(`Ошибка парсинга JSON: ${parseError.message}. Возможно, файл поврежден или это HTML страница.`);
+        }
+        
+        console.log('[loadGameDetails] Games loaded:', games.length);
+        console.log('[loadGameDetails] Available slugs:', games.map(g => g.slug));
+        
+        // Ищем игру
         const game = games.find(g => g.slug === gameSlug);
         
         if (!game) {
-            console.error('[loadGameDetails] Game not found for slug:', gameSlug);
-            console.log('[loadGameDetails] Available slugs:', games.map(g => g.slug));
-            showError(`Игра "${gameSlug}" не найдена в базе данных.`);
+            showError(`Игра "${gameSlug}" не найдена. Доступные игры: ${games.map(g => g.slug).join(', ')}`);
             return;
         }
         
@@ -737,7 +758,7 @@ async function loadGameDetails() {
         updatePageTitle(game);
         
     } catch (error) {
-        console.error('[loadGameDetails] Error:', error);
+        console.error('[loadGameDetails] Full error:', error);
         showError(`Не удалось загрузить информацию об игре: ${error.message}`);
     }
 }
