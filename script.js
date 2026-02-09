@@ -654,21 +654,32 @@ function changeSort(sortType) {
     });
 }
 
-// Загрузка деталей игры
 async function loadGameDetails() {
     try {
         // Получаем slug из URL
         const path = window.location.pathname;
+        const urlParams = new URLSearchParams(window.location.search);
         let gameSlug = null;
         
         // Определяем, откуда берём slug
         if (path.includes('/game/')) {
             // Красивый URL: /game/exocolonist
             gameSlug = path.split('/game/')[1];
-        } else {
-            // Старый URL: game.html?slug=exocolonist
-            const urlParams = new URLSearchParams(window.location.search);
-            gameSlug = urlParams.get('slug') || urlParams.get('id'); // Поддержка старых ссылок
+        } else if (urlParams.has('slug')) {
+            // Старый формат: game.html?slug=exocolonist
+            gameSlug = urlParams.get('slug');
+        } else if (urlParams.has('id')) {
+            // Самый старый формат: game.html?id=1
+            const gameId = urlParams.get('id');
+            // Нужно найти игру по ID и получить её slug
+            const response = await fetch('data/games.json');
+            const games = await response.json();
+            const game = games.find(g => g.id == gameId);
+            if (game && game.slug) {
+                // Перенаправляем на красивый URL
+                window.location.href = `game/${game.slug}`;
+                return;
+            }
         }
         
         if (!gameSlug) {
@@ -682,11 +693,8 @@ async function loadGameDetails() {
         
         const games = await response.json();
         
-        // Ищем игру по slug или id
-        const game = games.find(g => 
-            g.slug === gameSlug || 
-            g.id.toString() === gameSlug
-        );
+        // Ищем игру по slug
+        const game = games.find(g => g.slug === gameSlug);
         
         if (!game) {
             showError('Игра не найдена.');
