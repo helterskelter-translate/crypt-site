@@ -1,100 +1,116 @@
-<script>
-    // Инициализация страницы игры
-    document.addEventListener('DOMContentLoaded', function() {
-        loadGameDetails();
-        
-        // Поиск
-        const searchInput = document.getElementById('search-input');
-        searchInput.addEventListener('keyup', function(e) {
-            if (e.key === 'Enter') {
-                const query = this.value.trim();
-                if (query) {
-                    window.location.href = `all.html?search=${encodeURIComponent(query)}`;
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Загрузка... | крипт</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fslightbox@3.4.1/index.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="images/icon/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="images/icon/favicon-32x32.png" type="image/png" sizes="32x32">
+    <link rel="icon" href="images/icon/favicon-16x16.png" type="image/png" sizes="16x16">
+    <link rel="apple-touch-icon" href="images/icon/apple-touch-icon.png" sizes="180x180">
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <a href="index.html" class="logo">крипт</a>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="favorites.html" class="nav-link">Избранное</a>
+                    <a href="#" class="nav-link" data-author="helter-skelter">Helter Skelter</a>
+                    <a href="#" class="nav-link" data-author="snow-rowan">Snow Rowan</a>
+                    <a href="#" class="nav-link" data-author="gardares">Gardares</a>
+                </nav>
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Поиск переводов..." id="search-input">
+                    <button class="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M19 19L14.65 14.65" stroke="#e0e0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main">
+        <section class="game-details">
+            <div class="container">
+                <div class="game-details-container" id="game-container">
+                    <!-- Контент будет загружен через JavaScript -->
+                    <div class="loading">Загрузка информации об игре...</div>
+                </div>
+                
+                <div class="back-to-all">
+                    <a href="/" class="back-link">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M15 19L8 12L15 5" stroke="#e3a945" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Вернуться ко всем переводам
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Подвал -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">крипт</div>
+                <p class="footer-text">Фанатские переводы визуальных новелл и скрытых гемов, 2026</p>
+                <p class="footer-note">Все игры принадлежат их правообладателям. Все переводы созданы энтузиастами на некоммерческой основе, мы не продаем их или рекламу</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fslightbox@3.4.1/index.min.js"></script>
+    <script>
+        // Инициализация страницы игры
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGameDetails();
+            
+            // Поиск
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('keyup', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query) {
+                        window.location.href = `all.html?search=${encodeURIComponent(query)}`;
+                    }
                 }
-            }
-        });
-        
-        // Мобильное меню
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        mobileMenuBtn.addEventListener('click', function() {
-            document.querySelector('.nav').classList.toggle('active');
-        });
-        
-        // Обработчики для кнопок авторов
-        document.querySelectorAll('.nav-link[data-author]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                const author = this.dataset.author;
-                window.location.href = `all.html?author=${author}`;
+            });
+            
+            // Мобильное меню
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            mobileMenuBtn.addEventListener('click', function() {
+                document.querySelector('.nav').classList.toggle('active');
+            });
+            
+            // Обработчики для кнопок авторов
+            document.querySelectorAll('.nav-link[data-author]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const author = this.dataset.author;
+                    window.location.href = `all.html?author=${author}`;
+                });
             });
         });
-    });
-    
-    // Функция загрузки деталей игры
-    async function loadGameDetails() {
-        try {
-            // Пробуем получить slug из разных источников
-            let gameSlug = null;
-            
-            // 1. Из sessionStorage (при переходе с физической страницы)
-            gameSlug = sessionStorage.getItem('currentGameSlug');
-            if (gameSlug) {
-                sessionStorage.removeItem('currentGameSlug'); // Очищаем после использования
-            }
-            
-            // 2. Из URL параметров (старый способ или резервный)
-            if (!gameSlug) {
-                const urlParams = new URLSearchParams(window.location.search);
-                gameSlug = urlParams.get('slug');
-            }
-            
-            // 3. Из пути URL (человеко-понятный URL уже обработан Netlify)
-            if (!gameSlug && window.location.pathname.includes('game.html')) {
-                // Если мы на game.html без параметров, редиректим на главную
-                window.location.href = '/';
-                return;
-            }
-            
-            if (!gameSlug) {
-                showError('Игра не указана. Вернитесь на главную страницу и выберите игру.');
-                return;
-            }
-            
-            // Загружаем данные игр
-            const response = await fetch('data/games.json');
-            if (!response.ok) throw new Error('Не удалось загрузить данные');
-            
-            const games = await response.json();
-            const game = games.find(g => g.slug === gameSlug);
-            
-            if (!game) {
-                showError('Игра не найдена в базе данных.');
-                return;
-            }
-            
-            // Отображаем игру
-            displayGameDetails(game);
-            updatePageTitle(game);
-            
-            // Обновляем URL в истории браузера на красивый
-            window.history.replaceState({}, '', `/game/${gameSlug}`);
-            
-        } catch (error) {
-            console.error('Ошибка загрузки деталей игры:', error);
-            showError('Не удалось загрузить информацию об игре.');
-        }
-    }
-    
-    // Функция отображения ошибки
-    function showError(message) {
-        const container = document.getElementById('game-container');
-        if (container) {
-            container.innerHTML = `
-                <div class="no-results">
-                    <p>${message}</p>
-                    <a href="/" class="btn">Вернуться на главную</a>
-                </div>
-            `;
-        }
-    }
-</script>
+    </script>
+</body>
+</html>

@@ -9,47 +9,6 @@ const gamesPerPage = 12;
 let isLoadingMore = false;
 let currentSort = 'date-desc';
 
-function generateSitemap(games) {
-    const baseUrl = 'https://crypt.fans';
-    const today = new Date().toISOString().split('T')[0];
-    
-    let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-    <url>
-        <loc>${baseUrl}/</loc>
-        <lastmod>${today}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>1.0</priority>
-    </url>
-    
-    <url>
-        <loc>${baseUrl}/all</loc>
-        <lastmod>${today}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.9</priority>
-    </url>
-    
-    <url>
-        <loc>${baseUrl}/favorites</loc>
-        <lastmod>${today}</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-    </url>`;
-    
-    games.forEach(game => {
-        sitemap += `
-    <url>
-        <loc>${baseUrl}/game/${game.slug}</loc>
-        <lastmod>${game.dateAdded || today}</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-    </url>`;
-    });
-    
-    sitemap += '\n</urlset>';
-    return sitemap;
-}
-
 // Загрузка данных игр
 async function loadGames(mode = 'latest') {
     try {
@@ -66,7 +25,6 @@ async function loadGames(mode = 'latest') {
             displayInProgressGames();
             displayPlannedGames();
         } else if (mode === 'all') {
-            updateSitemap();
             displayAllGames();
             initializeTagsFilter();
             initializeSearch();
@@ -362,7 +320,7 @@ function createGameCard(game) {
 
     return `
         <div class="game-card">
-            <a href="/game/${game.slug}/" class="game-card-link">
+            <a href="game/${game.slug}" class="game-card-link">
                 <img src="${game.coverImage}" alt="${game.titleRu}" class="game-cover">
                 ${statusBadge}
                 <div class="game-info">
@@ -666,11 +624,10 @@ async function loadGameDetails() {
         if (path.includes('/game/')) {
             // Красивый URL: /game/exocolonist
             gameSlug = path.split('/game/')[1];
-            
-            // Удаляем слеш в конце, если есть
-            if (gameSlug.endsWith('/')) {
-                gameSlug = gameSlug.slice(0, -1);
-            }
+        } else {
+            // Старый URL: game.html?slug=exocolonist
+            const urlParams = new URLSearchParams(window.location.search);
+            gameSlug = urlParams.get('slug') || urlParams.get('id'); // Поддержка старых ссылок
         }
         
         if (!gameSlug) {
@@ -684,8 +641,11 @@ async function loadGameDetails() {
         
         const games = await response.json();
         
-        // Ищем игру по slug
-        const game = games.find(g => g.slug === gameSlug);
+        // Ищем игру по slug или id
+        const game = games.find(g => 
+            g.slug === gameSlug || 
+            g.id.toString() === gameSlug
+        );
         
         if (!game) {
             showError('Игра не найдена.');
@@ -946,23 +906,4 @@ window.resetFilters = resetFilters;
 window.loadMoreGames = loadMoreGames;
 window.changeSort = changeSort;
 window.toggleFavoriteCard = toggleFavoriteCard;
-
-// Добавьте эту функцию в конец script.js перед последней строкой (window.loadFavorites = loadFavorites;)
-
-async function updateSitemap() {
-    try {
-        const response = await fetch('data/games.json');
-        if (!response.ok) return;
-        
-        const games = await response.json();
-        const sitemap = generateSitemap(games);
-        
-        // Отправляем sitemap на сервер
-        console.log('Generated sitemap:', sitemap);
-        
-    } catch (error) {
-        console.error('Ошибка обновления sitemap:', error);
-    }
-}
-
 window.loadFavorites = loadFavorites;

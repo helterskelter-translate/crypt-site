@@ -1,11 +1,15 @@
+# Основные перенаправления
+/game/:slug              /game.html?slug=:slug     200
+/game.html?slug=:slug    /game/:slug              301
+
+# Поддержка старых ссылок
+/game.html?id=:id        /game.html?slug=:slug    301!
+/play/:id                /game.html?slug=:slug    301!
+
 # Главная страница
 /                       /index.html              200
 /all                    /all.html                200
 /favorites              /favorites.html          200
 
-# Старые ссылки перенаправляем на новые красивые URL
-/game.html?id=:id       /game/:slug              301
-/play/:id               /game/:slug              301
-
-# 404
+# 404 страница
 /*                      /index.html              404
